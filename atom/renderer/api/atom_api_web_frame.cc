@@ -19,6 +19,7 @@
 #include "third_party/WebKit/public/platform/WebCache.h"
 #include "third_party/WebKit/public/web/WebDocument.h"
 #include "third_party/WebKit/public/web/WebFrameWidget.h"
+#include "third_party/WebKit/public/web/WebImeTextSpan.h"
 #include "third_party/WebKit/public/web/WebInputMethodController.h"
 #include "third_party/WebKit/public/web/WebLocalFrame.h"
 #include "third_party/WebKit/public/web/WebScriptExecutionCallback.h"
@@ -203,7 +204,7 @@ void WebFrame::InsertText(const std::string& text) {
   web_frame_->FrameWidget()
             ->GetActiveWebInputMethodController()
             ->CommitText(blink::WebString::FromUTF8(text),
-                         blink::WebVector<blink::WebCompositionUnderline>(),
+                         blink::WebVector<blink::WebImeTextSpan>(),
                          blink::WebRange(),
                          0);
 }
