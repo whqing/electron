@@ -9,6 +9,7 @@
 #include "content/public/browser/render_process_host.h"
 #include "content/public/common/webplugininfo.h"
 #include "content/public/browser/plugin_service.h"
+#include "media/media_features.h"
 
 using content::PluginService;
 using content::WebPluginInfo;
@@ -28,7 +29,7 @@ bool WidevineCdmMessageFilter::OnMessageReceived(const IPC::Message& message) {
     IPC_MESSAGE_HANDLER(
         ChromeViewHostMsg_IsInternalPluginAvailableForMimeType,
         OnIsInternalPluginAvailableForMimeType)
-#endif
+#endif  // BUILDFLAG(ENABLE_LIBRARY_CDMS)
     IPC_MESSAGE_UNHANDLED(return false)
   IPC_END_MESSAGE_MAP()
   return true;
