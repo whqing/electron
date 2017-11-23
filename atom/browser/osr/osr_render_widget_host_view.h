@@ -21,6 +21,7 @@
 #include "base/threading/thread.h"
 #include "base/time/time.h"
 #include "cc/output/compositor_frame.h"
+#include "components/viz/common/frame_sinks/begin_frame_args.h"
 #include "components/viz/common/frame_sinks/begin_frame_source.h"
 #include "content/browser/frame_host/render_widget_host_view_guest.h"
 #include "content/browser/renderer_host/compositor_resize_lock.h"
