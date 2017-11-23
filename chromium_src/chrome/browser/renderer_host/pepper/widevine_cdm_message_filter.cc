@@ -25,7 +25,7 @@ WidevineCdmMessageFilter::WidevineCdmMessageFilter(
 
 bool WidevineCdmMessageFilter::OnMessageReceived(const IPC::Message& message) {
   IPC_BEGIN_MESSAGE_MAP(WidevineCdmMessageFilter, message)
-#if BUILDFLAG(ENABLE_PEPPER_CDMS)
+#if BUILDFLAG(ENABLE_LIBRARY_CDMS)
     IPC_MESSAGE_HANDLER(
         ChromeViewHostMsg_IsInternalPluginAvailableForMimeType,
         OnIsInternalPluginAvailableForMimeType)
@@ -35,7 +35,7 @@ bool WidevineCdmMessageFilter::OnMessageReceived(const IPC::Message& message) {
   return true;
 }
 
-#if BUILDFLAG(ENABLE_PEPPER_CDMS)
+#if BUILDFLAG(ENABLE_LIBRARY_CDMS)
 void WidevineCdmMessageFilter::OnIsInternalPluginAvailableForMimeType(
     const std::string& mime_type,
     bool* is_available,
@@ -61,7 +61,7 @@ void WidevineCdmMessageFilter::OnIsInternalPluginAvailableForMimeType(
 
   *is_available = false;
 }
-#endif // BUILDFLAG(ENABLE_PEPPER_CDMS)
+#endif  // BUILDFLAG(ENABLE_LIBRARY_CDMS)
 
 void WidevineCdmMessageFilter::OnDestruct() const {
   BrowserThread::DeleteOnUIThread::Destruct(this);
