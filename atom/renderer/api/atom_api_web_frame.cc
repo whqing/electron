@@ -13,6 +13,7 @@
 #include "atom/renderer/api/atom_api_spell_check_client.h"
 #include "base/memory/memory_pressure_listener.h"
 #include "content/public/renderer/render_frame.h"
+#include "content/public/renderer/render_frame_visitor.h"
 #include "content/public/renderer/render_view.h"
 #include "native_mate/dictionary.h"
 #include "native_mate/object_template_builder.h"
@@ -56,6 +57,27 @@ class ScriptExecutionCallback : public blink::WebScriptExecutionCallback {
   CompletionCallback callback_;
 
   DISALLOW_COPY_AND_ASSIGN(ScriptExecutionCallback);
+};
+
+class FrameSpellChecker : public content::RenderFrameVisitor {
+ public:
+  explicit FrameSpellChecker(SpellCheckClient* spell_check_client,
+                             content::RenderFrame* main_frame)
+      : spell_check_client_(spell_check_client), main_frame_(main_frame) {}
+  ~FrameSpellChecker() override = default;
+  bool Visit(content::RenderFrame* render_frame) override {
+    auto view = render_frame->GetRenderView();
+    if (view->GetMainRenderFrame() == main_frame_ ||
+        (render_frame->IsMainFrame() && render_frame == main_frame_)) {
+      render_frame->GetWebFrame()->SetTextCheckClient(spell_check_client_);
+    }
+    return true;
+  }
+
+ private:
+  SpellCheckClient* const spell_check_client_;
+  content::RenderFrame* main_frame_;
+  DISALLOW_COPY_AND_ASSIGN(FrameSpellChecker);
 };
 
 }  // namespace
@@ -142,7 +164,12 @@ void WebFrame::SetSpellCheckProvider(mate::Arguments* args,
   spell_check_client_.reset(new SpellCheckClient(
       language, auto_spell_correct_turned_on, args->isolate(), provider));
   web_frame_->View()->SetSpellCheckClient(spell_check_client_.get());
-  web_frame_->SetTextCheckClient(spell_check_client_.get());
+  // Set spellchecker for all live frames in the same process or
+  // in the sandbox mode for all live sub frames to this WebFrame.
+  FrameSpellChecker spell_checker(
+      spell_check_client_.get(),
+      content::RenderFrame::FromWebFrame(web_frame_));
+  content::RenderFrame::ForEach(&spell_checker);
 }
 
 void WebFrame::RegisterURLSchemeAsSecure(const std::string& scheme) {
