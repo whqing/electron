@@ -127,11 +127,11 @@ class AtomCopyFrameGenerator {
     if (!view_->render_widget_host())
       return;
 
-    std::unique_ptr<cc::CopyOutputRequest> request =
-        cc::CopyOutputRequest::CreateBitmapRequest(base::Bind(
-            &AtomCopyFrameGenerator::CopyFromCompositingSurfaceHasResult,
-            weak_ptr_factory_.GetWeakPtr(),
-            damage_rect));
+    std::unique_ptr<viz::CopyOutputRequest> request =
+        viz::CopyOutputRequest::CreateBitmapRequest(base::Bind(
+             &AtomCopyFrameGenerator::CopyFromCompositingSurfaceHasResult,
+             weak_ptr_factory_.GetWeakPtr(),
+             damage_rect));
 
     request->set_area(gfx::Rect(view_->GetPhysicalBackingSize()));
     view_->GetRootLayer()->RequestCopyOfOutput(std::move(request));
@@ -145,7 +145,7 @@ class AtomCopyFrameGenerator {
  private:
   void CopyFromCompositingSurfaceHasResult(
       const gfx::Rect& damage_rect,
-      std::unique_ptr<cc::CopyOutputResult> result) {
+      std::unique_ptr<viz::CopyOutputResult> result) {
     if (result->IsEmpty() || result->size().IsEmpty() ||
         !view_->render_widget_host()) {
       OnCopyFrameCaptureFailure(damage_rect);
