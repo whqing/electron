@@ -44,6 +44,8 @@ class BrowserClient : public content::ContentBrowserClient {
       override;
   void GetAdditionalAllowedSchemesForFileSystem(
       std::vector<std::string>* additional_schemes) override;
+  void GetAdditionalWebUISchemes(
+      std::vector<std::string>* additional_schemes) override;
   net::NetLog* GetNetLog() override;
   base::FilePath GetDefaultDownloadDirectory() override;
   content::DevToolsManagerDelegate* GetDevToolsManagerDelegate() override;
